@@ -12,7 +12,7 @@ class TestModel extends Model
 
         // print_r($request->all());
         // die();
-       
+
         // $check = DB::table('regs')->insertGetId(array('email' => $request['email'],'password' => $request['password']));
         DB::beginTransaction();
         try{
@@ -20,11 +20,11 @@ class TestModel extends Model
             array('email' => $request['email'],
             'password' => $request['password'],
             'name' => $request['name'])
-        );  
+        );
         }
         catch(ValidationException $e){
             DB::rollback();
-            return redirect()->route('register'); 
+            return redirect()->route('register');
         }
 
         DB::commit();
@@ -32,7 +32,7 @@ class TestModel extends Model
 
 
     public function checkLgin($request){
-      
+
         // print_r($request);
         // die();
 
@@ -47,19 +47,28 @@ class TestModel extends Model
 
     //------------------------------------------------------------------------------------------------
 
-    public function checkPro($request,$value){
+    public function addProduct($request,$id){
+
             $check = DB::table('product')->insert(
-            array(
-            'admin_email' => $value,
-            'product_category' => $request['product_category'],
-            'product_name' => $request['product_name'],
-            'product_stock' => $request['product_stock'],
-            'product_price' => $request['product_price'],
-            'product_file' => $request['product_file']
-            )
+                array(
+                    'admin_email' => $id,
+                    'product_category' => $request['product_category'],
+                    'product_name' => $request['product_name'],
+                    'product_stock' => $request['product_stock'],
+                    'product_price' => $request['product_price'],
+                    'product_file' => $request['product_file']
+                )
             );
             // print_r($check);
         return $check;
+    }
+
+    public function getId($email){
+        $result = DB::Table('regs')->select('id')->where('email', $email)->get();
+        $result = json_decode(json_encode($result), true);
+        // echo "<pre>";
+        $result = $result[0];
+        return $result["id"];
     }
 
    }

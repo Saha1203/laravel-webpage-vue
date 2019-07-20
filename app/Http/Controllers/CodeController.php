@@ -15,14 +15,14 @@ class CodeController extends Controller
 {
     public function verify_reg(request $request){
 
-        
-        
+
+
         $result = $this->validate($request,[
            'name' => 'required',
             'email' => 'required|unique:regs,email|email',
             'password' => 'required',
             'confirm_password' => 'required|same:password'
-            
+
         ],
         $customMessages = [
             'name.required' => 'Name field is required',
@@ -31,13 +31,13 @@ class CodeController extends Controller
             'confirm_password'  => 'Password should match with the previous one',
          ]);
 
-         
+
 
          if(!$result){
             // print_r($result);
             // print_r($request->all());
             // die();
-             
+
             $request['password'] = Hash::make($request['password']);
              $verify = new TestModel();
 
@@ -45,8 +45,9 @@ class CodeController extends Controller
 
              return redirect()->route('login');
          }
-        
+
     }
+
     public function verify_lgin(Request $request){
 
         $customMessages = [
@@ -55,126 +56,117 @@ class CodeController extends Controller
         ]; //Cusstom messages
 
         $result = $this->validate($request,[
-         
+
             'email' => 'required|email',
             'password' => 'required',
-            
+
         ],$customMessages); //validating
 
-        // print_r($request->all());
-        // die();
-        // $request['password'] = Hash::make($request['password']);
         if(!$result){
             $verify = new TestModel();
             $check= $verify->checkLgin($request->all());
         }
-        
-       
-       
-            
-        // if($request->session()->has('email'))
-         $request->session()->put('email',$request['email']);
-        //  $email=$request->session()->get('email');
-
-
 
         if(count($check)){
             $check=$check[0];
             $password=$request['password'];
-            
+
             $val = Hash::check($password, $check["password"]);
             if($val == ""){
                 $val=0;
             }
-            // print_r($val);
-            // die();
 
-                // if (Hash::check($password, $check["password"]))
                 if($val == 1)
-                {   
-                    // $request->session()->put('email',$request['email']);
-                    $email=$request->session()->get('email');
-                    // print_r($email);
+                {
+                    $request->session()->put('email',$request['email']);
+
+                    $test = new TestModel;
+                    $id = $test->getId($request['email']);
+
+                    $request->session()->put('id',$id);
+
+                    // print_r($request->session()->get('id'));
                     // die();
+
+                    $email=$request->session()->get('email');
+
                     $data = array(
                         'email'=> $email,
                         );
-                        // print_r($data);
-                        // die("Inside yes val");
-                       
+
                 return redirect()->route('dashboard')->with($data);
-                 } 
-                 else {  
+                 }
+                 else {
                     //  die("Inside no val");
                 return redirect()->route('login');
                  }
         }
-        else {  
+        else {
             // die("Inside else val");
              return redirect()->route('login');
         }
     }
+
     public function check_login(Request $request){
 
-        if(!$request->session()->get('email') )
+        // print_r($request->session()->get('id'));
+        // die();
+
+        // return view('login');
+
+        if ($request->session()->get('id'))
         {
-            return view('login');
+            return redirect()->route('dashboard');
         } else {
-            return redirect()->route('dashboard');   
+            return view('login');
         }
     }
-
 
     public function verify_pronew(){
         return redirect()->route('product');
     }
 
+    public function dashboard(Request $request){
 
-
-
-    public function check_ses(Request $request){
-
-        // print_r($request->session()->get('email'));
-        // die();
-        if($request->session()->get('email'))
-        {
-
-        }
-
-        else{
-        return redirect()->route('login');
-        }
-        $email = $request->session()->get('email');
-        // print_r($email);
-        // die();
-
-        $data = array(
-        'email' => $email,
-        );
-        
-        return view('dashboard')->with($data);
-        
-        
-        }
-    
-        public function verify_pro(request $request){
-
-
-            // dd($email);
-            // echo "<pre>";
-            // print_r($request->all());
+            // print_r($request->session()->get('id'));
             // die();
-             
-            $verify = new TestModel();
-            $email=$request->session()->get('email');
-            $verify1 = $verify->checkPro($request,$email);
-            return redirect()->route('productTable');
-         }
 
-        public function logout(request $request){
-            $request->session()->flush();
-            return redirect('/');
-        }
-            
+            if($request->session()->get('id'))
+            {
+
+            }
+
+            else{
+                return redirect()->route('login');
+            }
+
+            $email = $request->session()->get('email');
+                // print_r($email);
+                // die();
+
+                $data = array(
+                    'email' => $email,
+                );
+
+                return view('dashboard')->with($data);
+    }
+
+    public function verify_pro(Request $request){
+
+        $id = $request->session()->get('id');
+
+        // print_r($id);
+        // die();
+
+        $verify = new TestModel();
+        $verify->addProduct($request,$id);
+        return redirect()->route('productTable');
+    }
+
+    public function logout(request $request){
+        $request->session()->flush();
+        return redirect()->route('/');
+    }
+
 }
 ?>
