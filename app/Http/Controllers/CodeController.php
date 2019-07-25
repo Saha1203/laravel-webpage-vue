@@ -165,7 +165,7 @@ class CodeController extends Controller
 
     public function logout(request $request){
         $request->session()->flush();
-        return redirect()->route('/');
+        return redirect('/');
     }
 
 }

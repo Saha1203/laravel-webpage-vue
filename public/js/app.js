@@ -47333,9 +47333,6 @@ var render = function() {
               attrs: { type: "number", min: "0", step: ".01" },
               domProps: { value: invoice_product.product_price },
               on: {
-                change: function($event) {
-                  return _vm.calculateLineTotal(invoice_product)
-                },
                 input: function($event) {
                   if ($event.target.composing) {
                     return
@@ -47366,6 +47363,9 @@ var render = function() {
               attrs: { readonly: "", type: "number", min: "0", step: ".01" },
               domProps: { value: invoice_product.line_total },
               on: {
+                change: function($event) {
+                  return _vm.calculateLineTotal(invoice_product)
+                },
                 input: function($event) {
                   if ($event.target.composing) {
                     return

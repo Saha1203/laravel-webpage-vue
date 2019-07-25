@@ -11,7 +11,7 @@
             </td>
             <td>
                 <label>Product Name</label>
-                <input class="form-control" type="text" v-model="invoice_product.product_name" />
+                <input class="form-control" type="text" v-model="invoice_product.product_name"/>
             </td>
             <td>
                 <label>Product Stock</label>
@@ -21,12 +21,12 @@
             <td>
                 <label>Product Price</label>
                 <input class="form-control text-right" type="number" min="0" step=".01"
-                v-model="invoice_product.product_price" @change="calculateLineTotal(invoice_product)" />
+                v-model="invoice_product.product_price" />
             </td>
             <td>
                 <label>Total</label>
                 <input readonly class="form-control text-right" type="number" min="0" step=".01"
-                v-model="invoice_product.line_total" />
+                v-model="invoice_product.line_total"  @change="calculateLineTotal(invoice_product)"/>
             </td>
         </tr>
 
